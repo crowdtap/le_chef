@@ -8,7 +8,7 @@ recipe            'le_chef::default',   'Downloads the agent and sets up logging
 recipe            'le_chef::install',    'Download and install the agent from le repo'
 recipe            'le_chef::configure', 'Register and le start agent, follow files'
 recipe            'logentries::datahub', 'Installs the DataHub for advanced log routing'
-version '0.2.0'
+version '0.2.1'
 
 supports 'ubuntu'
 supports 'rhel'
