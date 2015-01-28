@@ -42,11 +42,25 @@ service 'leproxy' do
   action :nothing
 end
 
-template "#{node['le']['datahub']['local_path']}/leproxy.config" do
+# The leproxy caches several logentries-server-side settings in its config file
+# on start. As such, we wish to only rewrite it when we changed something
+# as opposed to on every run (due to the rewriting by the deamon itself). To
+# achieve this, we will make another 'seed' file and copy that one into place
+# and do a restart if it changes (or the real config doesn't exist)
+seed_config = "#{node['le']['datahub']['local_path']}/leproxy.config.chef"
+real_config = "#{node['le']['datahub']['local_path']}/leproxy.config"
+
+template seed_config do
   source 'etc/leproxy/leproxy.config.erb'
   variables( node['le']['datahub'].to_hash.tap do |h|
               h[:user_key] = node['le']['account_key']
             end)
+  notifies :create, "file[#{real_config}]", :immediately
+end
+
+file real_config do
+  content( lazy { IO.read(seed_config) } )
+  action :create_if_missing
   notifies :restart, 'service[leproxy]'
 end
 
