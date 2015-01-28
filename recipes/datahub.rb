@@ -37,14 +37,16 @@ if platform_family?('debian')
   end
 end
 
+service 'leproxy' do
+  supports :stop => true, :start => true, :restart => true
+  action :nothing
+end
+
 template "#{node['le']['datahub']['local_path']}/leproxy.config" do
   source 'etc/leproxy/leproxy.config.erb'
   variables( node['le']['datahub'].to_hash.tap do |h|
               h[:user_key] = node['le']['account_key']
             end)
+  notifies :restart, 'service[leproxy]'
 end
 
-service 'leproxy' do
-  supports :stop => true, :start => true, :restart => true
-  action [ :restart ]
-end
