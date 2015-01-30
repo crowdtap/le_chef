@@ -25,3 +25,5 @@ default['le']['datahub']['logging']['system-stats']['sendToLogentries'] = false
 
 default['le']['datahub']['rules'] = []
 default['le']['datahub']['filters'] = []
+
+default['le']['datahub']['automate_rules'] = true
